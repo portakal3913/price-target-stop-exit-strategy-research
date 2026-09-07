@@ -112,6 +112,30 @@ Klasik RSI kuralı "RSI 70'i geçince aşırı alım, SAT" der. Ancak bu proje b
 
 Out-of-Sample sonucu yine In-Sample'dan daha güçlü çıktı — Breakout'takiyle aynı sağlamlık örüntüsü.
 
+### 6. Üçüncü Doğrulanmış Sinyal: Fibonacci Geri Çekilme + Uzantı (`6_fibonacci_geri_cekilme_stratejisi.py`)
+
+Bu strateji tasarımı kullanıcı ile birlikte geliştirildi. Fikir: son 90 günün Dip-Zirve aralığında, fiyatın test ettiği **birden fazla** geri çekilme seviyesini (`%23.6, %38.2, %50, %61.8, %78.6`) kontrol edip, **o gün test edilen EN DERİN seviyeden** başarılı bir ret (Low seviyenin altına inip Close üstüne dönmesi) olursa sinyal üretmek. Hedef için de sabit R-katı yerine **Fibonacci Uzantısı** kullanıldı (`Dip + ext×(Zirve-Dip)`).
+
+| Uzantı Hedefi | n (çakışmalı) | Ort. Getiri | p-değeri | n (bağımsız) | Ort. Getiri (bağımsız) | p-değeri (bağımsız) |
+|---|---|---|---|---|---|---|
+| %127.2 | 2777 | %0.817 | <0.0001 | 598 | %1.100 | <0.0001 |
+| **%161.8** | **2778** | **%1.129** | **<0.0001** | **541** | **%1.433** | **<0.0001** |
+
+**Varlık bazında (Uzantı=%161.8):** Nasdaq %1.36, S&P500 %1.21, Altın %0.62, BIST100 %1.25 — **4/4 varlıkta pozitif**, ve bu projedeki **en büyük örneklem büyüklüğü** (n=2778).
+
+**In-Sample / Out-of-Sample:**
+
+| Dönem | n | Ort. Getiri | Kazanma | p-değeri |
+|---|---|---|---|---|
+| In-Sample (2010-2020) | 1884 | %0.904 | %17.6 | <0.000001 |
+| **Out-of-Sample (2021-2026)** | **894** | **%1.603** | **%20.4** | **<0.000001** |
+
+Yine Out-of-Sample, In-Sample'dan daha güçlü çıktı.
+
+**Önemli uyarı — düşük kazanma oranı:** Bu sistemin kazanma oranı `%16-22` gibi düşük — yani **her ~5 işlemden 4'ü kaybediyor**, ama kazananların büyüklüğü kayıpları fazlasıyla telafi ediyor (yüksek Ödül/Risk oranlı, düşük isabetli bir sistem). Matematiksel olarak güçlü olsa da, **psikolojik olarak zorlu**: üst üste çok sayıda kayıplı işlem görmeye dayanıklı bir uygulama disiplini gerektirir. Bu, Dinamik Risk Yönetimi aşamasında dikkate alınması gereken önemli bir özellik.
+
+![Doğrulanmış Stratejiler Karşılaştırması](figure_dogrulanmis_stratejiler_karsilastirma.png)
+
 ## Genel Sonuç
 
 **Çıkış yöntemi, sinyalin kendisi kadar (bazen ondan daha fazla) önemli.** Aynı Breakout sinyali:
@@ -120,9 +144,10 @@ Out-of-Sample sonucu yine In-Sample'dan daha güçlü çıktı — Breakout'taki
 
 Bu, önceki projelerdeki "basit teknik analiz kuralları işe yaramıyor" sonucunu **kısmen revize ediyor**: sorun sinyalin kendisinde değil, çoğu zaman **backtest metodolojisinde** olabiliyormuş. Ayrıca **RSI momentum devamı** bulgusu, "aşırı alım = sat" gibi yerleşik bir kuralın bile ters çevrilip test edilmeye değer olduğunu gösterdi — ki bu ters çevirme, projedeki **ikinci en güçlü sinyal**i ortaya çıkardı.
 
-**İki doğrulanmış sistem artık Dinamik Risk Yönetimi'nin üzerine inşa edileceği temel:**
+**Üç doğrulanmış sistem artık Dinamik Risk Yönetimi'nin üzerine inşa edileceği temel:**
 1. Breakout, Stop=Sinyal Günü Low, Hedef=3R
 2. RSI 70 Yukarı Kesişimi (momentum devamı), Stop=Sinyal Günü Low, Hedef=3R
+3. Fibonacci Geri Çekilme (en derin seviyeden ret), Stop=Sinyal Günü Low, Hedef=Fibonacci Uzantısı %161.8 (en büyük örneklem, en yüksek beklenti, ama en düşük kazanma oranı)
 
 (Not: RSI'ın "aşırı satımdan dönüş" versiyonu ve trend-filtreli versiyonu ayrıca test edildi ama anlamlı bir edge göstermedi; EMA Golden Cross ise **örneklem büyüklüğü yetersiz olduğu için (n=38, bkz. Bulgu 3) "edge yok" ya da "edge var" şeklinde değerlendirilemedi** — değerlendirme dışı bırakılmasının sebebi zayıf sonuç değil, yetersiz kanıttır.)
 
@@ -138,6 +163,7 @@ Bu projede test edilen kombinasyon sayısı azdı (2-3 hedef türü × birkaç R
 - `3_ema_ve_breakout_r_katli_tarama.py` — EMA ve Breakout'a R-katlı fiyat hedefi uygulanması.
 - `4_breakout_3R_dogrulama.py` — Kazanan Breakout sisteminin bağımsızlık ve In-Sample/Out-of-Sample doğrulaması.
 - `5_rsi_momentum_devam_stratejisi.py` — RSI 70 kesişiminin "sat" yerine "momentuma katıl" olarak test edilmesi ve doğrulanması.
+- `6_fibonacci_geri_cekilme_stratejisi.py` — Çoklu Fibonacci seviyesi reddi + Fibonacci uzantı hedefi stratejisi ve doğrulanması.
 
 ## Kullanılan Araçlar
 
