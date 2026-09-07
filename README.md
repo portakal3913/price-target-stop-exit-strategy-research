@@ -77,13 +77,52 @@ Bağımsız örneklemde (`n=818`) sonuç **korunuyor, hatta iyileşiyor**: Ort. 
 
 **Out-of-Sample sonucu, In-Sample'dan bile daha güçlü çıktı** — önceki projedeki (`X=92,Y=50`) in-sample'da iyi görünüp out-of-sample'da tersine dönen bulgunun tam zıttı. Bu, sistemin gerçekten sağlam olduğuna dair en güçlü kanıt.
 
+### 5. İkinci Doğrulanmış Sinyal: RSI Momentum Devamı (`5_rsi_momentum_devam_stratejisi.py`)
+
+Klasik RSI kuralı "RSI 70'i geçince aşırı alım, SAT" der. Ancak bu proje boyunca öğrendiğimiz "genel piyasa drift'i short'ları cezalandırır" dersini (bkz. Breakout araştırması) uygulayarak, RSI 70'i yukarı kesme anını **SAT değil, güçlü momentuma katılma (AL) sinyali** olarak yeniden yorumladık — bu değişikliğin fikri kullanıcıdan geldi.
+
+**Önce ham RSI 70 kesişiminde SHORT test edildi (beklendiği gibi kötü çıktı):**
+
+| R | Ort. Getiri | p-değeri |
+|---|---|---|
+| 1 | -%0.11 | <0.0001 |
+| 2 | -%0.11 | <0.0001 |
+| 3 | -%0.11 | <0.0001 |
+
+Şort pozisyonların tutarlı ve anlamlı şekilde **kayıp ettirdiği** doğrulandı (Breakout'taki short bulgusuyla aynı örüntü).
+
+**Sonra aynı sinyal LONG (momentum devamı) olarak test edildi:**
+
+| R | n (çakışmalı) | Ort. Getiri | p-değeri | n (bağımsız) | Ort. Getiri (bağımsız) | p-değeri (bağımsız) |
+|---|---|---|---|---|---|---|
+| 1 | 404 | %0.247 | <0.0001 | 351 | %0.257 | 0.0001 |
+| 2 | 404 | %0.461 | <0.0001 | 312 | %0.449 | <0.0001 |
+| **3** | **404** | **%0.546** | **<0.0001** | **291** | **%0.620** | **<0.0001** |
+
+**Varlık bazında tutarlılık (R=3):** Nasdaq %0.38, S&P500 %0.17, Altın %0.61, BIST100 %1.08 — **4/4 varlıkta pozitif.**
+
+**In-Sample / Out-of-Sample:**
+
+| Dönem | n | Ort. Getiri | p-değeri |
+|---|---|---|---|
+| In-Sample (2010-2020) | 277 | %0.341 | 0.008960 |
+| **Out-of-Sample (2021-2026)** | **127** | **%0.995** | **0.000304** |
+
+Out-of-Sample sonucu yine In-Sample'dan daha güçlü çıktı — Breakout'takiyle aynı sağlamlık örüntüsü.
+
 ## Genel Sonuç
 
 **Çıkış yöntemi, sinyalin kendisi kadar (bazen ondan daha fazla) önemli.** Aynı Breakout sinyali:
 - Sabit N-gün çıkışıyla ölçüldüğünde → **edge yok**
 - Fiyat-bazlı stop/hedef (3R) ile ölçüldüğünde → **çapraz varlıkta tutarlı, bağımsızlık ve in-sample/out-of-sample testlerinden geçen güçlü bir edge**
 
-Bu, önceki projelerdeki "basit teknik analiz kuralları işe yaramıyor" sonucunu **kısmen revize ediyor**: sorun sinyalin kendisinde değil, çoğu zaman **backtest metodolojisinde** olabiliyormuş. **Kazanan sistem (Breakout, Stop=Sinyal Günü Low, Hedef=3R) artık Dinamik Risk Yönetimi'nin üzerine inşa edileceği doğrulanmış temel.**
+Bu, önceki projelerdeki "basit teknik analiz kuralları işe yaramıyor" sonucunu **kısmen revize ediyor**: sorun sinyalin kendisinde değil, çoğu zaman **backtest metodolojisinde** olabiliyormuş. Ayrıca **RSI momentum devamı** bulgusu, "aşırı alım = sat" gibi yerleşik bir kuralın bile ters çevrilip test edilmeye değer olduğunu gösterdi — ki bu ters çevirme, projedeki **ikinci en güçlü sinyal**i ortaya çıkardı.
+
+**İki doğrulanmış sistem artık Dinamik Risk Yönetimi'nin üzerine inşa edileceği temel:**
+1. Breakout, Stop=Sinyal Günü Low, Hedef=3R
+2. RSI 70 Yukarı Kesişimi (momentum devamı), Stop=Sinyal Günü Low, Hedef=3R
+
+(Not: RSI'ın "aşırı satımdan dönüş" versiyonu ve trend-filtreli versiyonu ayrıca test edildi ama anlamlı bir edge göstermedi; EMA Golden Cross ise örneklem büyüklüğü yetersiz olduğu için (n=38) değerlendirme dışı bırakıldı.)
 
 ## Metodolojik Not
 
@@ -95,7 +134,8 @@ Bu projede test edilen kombinasyon sayısı azdı (2-3 hedef türü × birkaç R
 - `1_bollinger_zaman_bazli_cikis.py` — Bollinger sinyalinin naif (sabit N gün) test edilmesi.
 - `2_bollinger_fiyat_hedefli_cikis.py` — Aynı sinyalin fiyat-bazlı (orta/üst bant hedefli) test edilmesi.
 - `3_ema_ve_breakout_r_katli_tarama.py` — EMA ve Breakout'a R-katlı fiyat hedefi uygulanması.
-- `4_breakout_3R_dogrulama.py` — Kazanan sistemin bağımsızlık ve In-Sample/Out-of-Sample doğrulaması.
+- `4_breakout_3R_dogrulama.py` — Kazanan Breakout sisteminin bağımsızlık ve In-Sample/Out-of-Sample doğrulaması.
+- `5_rsi_momentum_devam_stratejisi.py` — RSI 70 kesişiminin "sat" yerine "momentuma katıl" olarak test edilmesi ve doğrulanması.
 
 ## Kullanılan Araçlar
 
