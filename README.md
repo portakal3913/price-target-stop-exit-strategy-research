@@ -37,7 +37,9 @@ Hedefi genişletmek (Orta → Üst Bant), kazanma oranını düşürdü (%37.6 �
 
 Bu sinyallerde Bollinger'daki gibi doğal bir "bant" hedefi yok, bu yüzden hedefi **sabit R-katı** (risk mesafesinin katı) olarak tanımladık ve R=1,2,3 denedik:
 
-**EMA Golden Cross:** `n=38` (çok küçük örneklem, EMA kesişimi nadir) — hiçbir R değerinde anlamlı değil.
+**EMA Golden Cross:** `n=38` (4 varlık toplamında). Bu, projedeki diğer sinyallerle (Breakout n=1444, RSI momentum n=404, Bollinger n=717) karşılaştırıldığında **çok küçük** bir örneklem — sebebi, EMA50/EMA200 kesişiminin doğası gereği çok nadir oluşan bir olay olması (Nasdaq 100'de 2010-2026 arası sadece birkaç kez gerçekleşiyor).
+
+**Neden bu örneklemle "anlamlı değil" bile diyemiyoruz:** `n=38` ile yapılan bir t-testinin **istatistiksel gücü (power)** çok düşüktür — yani gerçekte küçük-orta büyüklükte bir edge var olsa bile, bu kadar az veriyle onu tespit etme ihtimalimiz zaten zayıftır. Bu yüzden EMA Golden Cross için "edge yok" sonucuna varmıyoruz; sonucu **"bu veriyle güvenilir bir yargıya varılamaz"** olarak bırakıyoruz. Bunu düzeltmenin yolları: daha fazla varlık eklemek (örnek büyüklüğünü artırmak) ya da daha uzun bir tarihsel pencere kullanmak — ikisi de bu projenin kapsamı dışında bırakıldı.
 
 **Breakout:**
 
@@ -122,7 +124,7 @@ Bu, önceki projelerdeki "basit teknik analiz kuralları işe yaramıyor" sonucu
 1. Breakout, Stop=Sinyal Günü Low, Hedef=3R
 2. RSI 70 Yukarı Kesişimi (momentum devamı), Stop=Sinyal Günü Low, Hedef=3R
 
-(Not: RSI'ın "aşırı satımdan dönüş" versiyonu ve trend-filtreli versiyonu ayrıca test edildi ama anlamlı bir edge göstermedi; EMA Golden Cross ise örneklem büyüklüğü yetersiz olduğu için (n=38) değerlendirme dışı bırakıldı.)
+(Not: RSI'ın "aşırı satımdan dönüş" versiyonu ve trend-filtreli versiyonu ayrıca test edildi ama anlamlı bir edge göstermedi; EMA Golden Cross ise **örneklem büyüklüğü yetersiz olduğu için (n=38, bkz. Bulgu 3) "edge yok" ya da "edge var" şeklinde değerlendirilemedi** — değerlendirme dışı bırakılmasının sebebi zayıf sonuç değil, yetersiz kanıttır.)
 
 ## Metodolojik Not
 
